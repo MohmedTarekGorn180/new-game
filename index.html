@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>مدرستي وكلنا نعمل — تجربة تفاعلية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a2438; --ink-2:#3b465c; --muted:#7a8299;
+    --line:#e8e2d6; --line-soft:#f0ece2;
+    --surface:#ffffff; --surface-2:#fbf8f3;
+    --accent:#4a3f6b; --gold:#b8924a; --teal:#2d7a6f; --coral:#c96b5b;
+    --shadow-1:0 1px 2px rgba(26,36,56,.05), 0 2px 6px rgba(26,36,56,.04);
+    --shadow-2:0 2px 4px rgba(26,36,56,.04), 0 8px 22px -6px rgba(26,36,56,.10);
+    --shadow-3:0 4px 8px rgba(26,36,56,.05), 0 18px 44px -10px rgba(26,36,56,.16);
+    --shadow-inset:inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:'Tajawal','Segoe UI',Tahoma,sans-serif; color:var(--ink);
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(circle at 12% 15%, rgba(107,91,149,.09), transparent 45%),
+      radial-gradient(circle at 88% 8%, rgba(45,122,111,.07), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(184,146,74,.09), transparent 50%),
+      linear-gradient(180deg,#faf7f1 0%,#f1ece1 100%);
+    background-attachment:fixed; line-height:1.6; font-size:17px;
+  }
+  button{font-family:inherit; touch-action:manipulation;}
+
+  .topbar{
+    position:sticky; top:0; z-index:60;
+    display:flex; align-items:center; gap:14px;
+    padding:14px 24px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border-bottom:1px solid rgba(26,36,56,.07);
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, var(--shadow-1);
+  }
+  .brand{
+    flex:1; display:flex; align-items:center; gap:10px;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:1.15rem; color:var(--ink); letter-spacing:-.01em;
+  }
+  .brand-mark{
+    width:34px; height:34px; border-radius:10px;
+    background:linear-gradient(145deg,var(--accent),#6b5b95);
+    display:grid; place-items:center; font-size:1.05rem;
+    box-shadow:0 1px 0 rgba(255,255,255,.25) inset, var(--shadow-1);
+  }
+  .stars-pill{
+    display:flex; align-items:center; gap:7px;
+    background:linear-gradient(145deg,#fffaf0,#fdf1d6);
+    border:1px solid #e8d3a0; color:#7a5a1c;
+    font-weight:800; font-size:.92rem;
+    padding:8px 16px; border-radius:99px;
+    box-shadow:var(--shadow-inset), 0 1px 3px rgba(184,146,74,.15);
+    font-variant-numeric:tabular-nums;
+  }
+  .icon-btn{
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:11px; width:42px; height:42px;
+    font-size:1.05rem; cursor:pointer;
+    box-shadow:var(--shadow-1), var(--shadow-inset);
+    transition:transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .icon-btn:hover{border-color:#d4c9b3;}
+  .icon-btn:active{transform:scale(.94);}
+
+  main{padding:32px 20px 40px; max-width:1000px; margin:0 auto;}
+  .screen{display:none;}
+  .screen.active{display:block; animation:screenIn .45s cubic-bezier(.22,1,.36,1);}
+  @keyframes screenIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+
+  .hero{text-align:center; margin-bottom:20px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:.78rem; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--gold);
+    padding:7px 16px; border-radius:99px;
+    background:rgba(184,146,74,.08);
+    border:1px solid rgba(184,146,74,.22); margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--gold); box-shadow:0 0 8px var(--gold);
+  }
+  .hero-title{
+    font-family:'El Messiri',serif;
+    font-size:clamp(1.8rem,5.2vw,2.8rem);
+    font-weight:700; line-height:1.25;
+    margin:0 0 14px; letter-spacing:-.015em;
+  }
+  .hero-title em{
+    font-style:normal;
+    background:linear-gradient(135deg,var(--accent) 0%,#6b5b95 50%,var(--teal) 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .hero-sub{
+    font-size:clamp(.95rem,3.4vw,1.08rem);
+    color:var(--ink-2); margin:0 auto; max-width:680px;
+    font-weight:500; line-height:1.7;
+  }
+  .divider{
+    width:72px; height:3px; margin:22px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    border-radius:3px;
+  }
+  .themes-note{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:26px 0 0;}
+  .theme-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--line);
+    padding:9px 16px; border-radius:12px;
+    font-size:.82rem; font-weight:600; color:var(--ink-2);
+    box-shadow:var(--shadow-1);
+  }
+  .theme-badge b{color:var(--ink); font-weight:700;}
+
+  .section-label{
+    display:flex; align-items:center; gap:14px;
+    margin:36px 0 18px;
+    font-family:'El Messiri',serif;
+    font-weight:600; font-size:1.15rem; color:var(--ink);
+  }
+  .section-label::after{
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg,var(--line),transparent);
+  }
+  .section-label .count{
+    font-family:'Tajawal',sans-serif;
+    font-size:.72rem; font-weight:700; color:var(--muted);
+    background:var(--surface-2); border:1px solid var(--line);
+    padding:3px 10px; border-radius:99px; letter-spacing:0;
+  }
+
+  .games-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+  }
+  .game-card{
+    position:relative; overflow:hidden;
+    border:none; border-radius:20px;
+    padding:22px 14px 18px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    color:#fff; text-align:center;
+    transition:transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.22) inset,
+      0 8px 20px -6px rgba(26,36,56,.22),
+      0 18px 42px -12px rgba(26,36,56,.20);
+  }
+  .game-card::before{
+    content:''; position:absolute; inset:0 0 55% 0;
+    background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);
+    pointer-events:none; border-radius:20px 20px 0 0;
+  }
+  .game-card::after{
+    content:''; position:absolute; top:-60%; left:-30%;
+    width:160%; height:120%;
+    background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);
+    transform:rotate(8deg); pointer-events:none;
+    transition:transform .6s;
+  }
+  .game-card:hover{
+    transform:translateY(-6px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.24) inset,
+      0 12px 28px -6px rgba(26,36,56,.28),
+      0 28px 56px -16px rgba(26,36,56,.28);
+  }
+  .game-card:hover::after{transform:rotate(8deg) translateX(20%);}
+  .game-card:active{transform:translateY(-2px);}
+  .g-emoji{
+    font-size:2.4rem; line-height:1;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.2));
+    position:relative; z-index:1;
+  }
+  .g-title{
+    font-family:'El Messiri',serif;
+    font-weight:700; font-size:1.02rem; letter-spacing:-.01em;
+    position:relative; z-index:1;
+  }
+  .g-desc{
+    font-size:.74rem; font-weight:500; opacity:.9;
+    line-height:1.4; position:relative; z-index:1;
+  }
+
+  .gc-purple{background:linear-gradient(150deg,#4a3f6b 0%,#6b5b95 100%);}
+  .gc-green {background:linear-gradient(150deg,#1f5e56 0%,#2d7a6f 100%);}
+  .gc-orange{background:linear-gradient(150deg,#8f6b2b 0%,#b8924a 100%);}
+  .gc-blue  {background:linear-gradient(150deg,#2a4a6b 0%,#3a6b9e 100%);}
+  .gc-pink  {background:linear-gradient(150deg,#9a4a3d 0%,#c96b5b 100%);}
+  .gc-plum  {background:linear-gradient(150deg,#5a3a5e 0%,#8a5b8f 100%);}
+  .gc-ocean {background:linear-gradient(150deg,#1f4d5e 0%,#2f7a8a 100%);}
+  .gc-sun   {background:linear-gradient(150deg,#8f5a2b 0%,#c98a4a 100%);}
+  .gc-rose  {background:linear-gradient(150deg,#8f3a4e 0%,#c45b7a 100%);}
+  .gc-sky   {background:linear-gradient(150deg,#2a4a7a 0%,#4a7ab8 100%);}
+  .gc-forest{background:linear-gradient(150deg,#2a4a2e 0%,#4a7a4e 100%);}
+
+  .game-head{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .game-head h2{
+    flex:1; margin:0;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:clamp(1.15rem,4vw,1.4rem); color:var(--ink);
+    letter-spacing:-.01em;
+  }
+  .back-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink-2);
+    font-weight:700; font-size:.85rem; padding:9px 16px; border-radius:11px;
+    cursor:pointer; box-shadow:var(--shadow-1);
+    transition:all .15s;
+  }
+  .back-btn:hover{border-color:#d4c9b3; color:var(--ink);}
+  .back-btn:active{transform:scale(.96);}
+  .hud{display:flex; gap:8px; flex-wrap:wrap; font-size:.82rem; font-weight:700; color:var(--ink-2);}
+  .hud span{
+    background:var(--surface); border:1px solid var(--line);
+    padding:7px 13px; border-radius:99px;
+    box-shadow:var(--shadow-1); font-variant-numeric:tabular-nums;
+  }
+  .hud b{color:var(--accent); font-weight:800;}
+
+  .card-panel{
+    background:var(--surface); border:1px solid var(--line-soft);
+    border-radius:24px; padding:28px 24px;
+    box-shadow:var(--shadow-3), var(--shadow-inset);
+  }
+
+  .btn{
+    border:none; border-radius:13px; padding:13px 24px;
+    font-weight:700; font-size:.95rem; cursor:pointer;
+    transition:all .15s; letter-spacing:.01em;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn.primary{
+    background:linear-gradient(160deg,var(--accent) 0%,#6b5b95 100%);
+    color:#fff;
+    box-shadow:0 1px 0 rgba(255,255,255,.2) inset, 0 4px 14px -4px rgba(74,63,107,.5);
+  }
+  .btn.ghost{
+    background:var(--surface-2); color:var(--ink-2);
+    border:1px solid var(--line); box-shadow:var(--shadow-1);
+  }
+  .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:22px;}
+
+  /* ===== Simple Quiz Games (new) ===== */
+  .simple-emoji{
+    text-align:center; font-size:clamp(80px, 22vw, 120px);
+    line-height:1; margin:10px 0 20px;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.15));
+    animation:bounce 2.5s ease-in-out infinite;
+  }
+  @keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+  }
+  .simple-emoji-row{
+    text-align:center; font-size:clamp(46px, 12vw, 68px);
+    line-height:1.3; margin:16px 0 20px;
+    letter-spacing:8px; word-break:break-all;
+  }
+  .simple-question{
+    text-align:center;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:clamp(1.3rem, 5vw, 1.7rem);
+    color:var(--ink); margin:0 0 26px;
+    letter-spacing:-.01em;
+  }
+  .simple-options{
+    display:flex; gap:14px; justify-content:center;
+    flex-wrap:wrap; margin-top:22px;
+  }
+  .simple-option{
+    flex:1 1 130px; max-width:180px;
+    min-height:110px;
+    padding:16px 14px;
+    border:2px solid var(--line);
+    background:var(--surface);
+    border-radius:18px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:6px;
+    box-shadow:var(--shadow-1); transition:all .18s;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:1.1rem; color:var(--ink);
+  }
+  .simple-option .opt-emoji{
+    font-size:2.4rem; line-height:1;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.1));
+  }
+  .simple-option .opt-text{
+    font-size:1.05rem; line-height:1.2;
+  }
+  .simple-option:hover{
+    border-color:var(--accent);
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-2);
+  }
+  .simple-option:disabled{cursor:default; transform:none;}
+  .simple-option.correct{
+    background:linear-gradient(160deg,#e6f6ee,#cdeede);
+    border-color:var(--teal); color:#1f5e56;
+    box-shadow:inset 0 0 0 1px rgba(45,122,111,.15), var(--shadow-2);
+  }
+  .simple-option.wrong{
+    background:linear-gradient(160deg,#fde8e4,#f9cfc7);
+    border-color:var(--coral); color:#8f3f2d;
+  }
+
+  /* Color options */
+  .color-option{
+    width:90px; height:90px;
+    border-radius:50%;
+    border:4px solid var(--surface);
+    cursor:pointer;
+    box-shadow:var(--shadow-2);
+    transition:transform .15s;
+    position:relative;
+  }
+  .color-option:hover{transform:scale(1.1);}
+  .color-option:disabled{cursor:default; transform:none;}
+  .color-option::after{
+    content:'✓'; position:absolute; inset:0;
+    display:none; place-items:center;
+    font-size:2rem; color:#fff; font-weight:700;
+    text-shadow:0 2px 4px rgba(0,0,0,.3);
+  }
+  .color-option.correct::after{display:grid;}
+  .color-option.wrong{
+    opacity:.5;
+    animation:shake .4s;
+  }
+  @keyframes shake{25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+  /* True/False buttons */
+  .tf-buttons{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:26px;}
+  .tf-btn{
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:16px; padding:22px 16px;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:1.25rem; color:var(--ink); cursor:pointer;
+    box-shadow:var(--shadow-1); transition:all .18s;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .tf-btn .tf-icon{font-size:2rem;}
+  .tf-btn.true-btn:hover{border-color:var(--teal); background:#f0faf5; transform:translateY(-2px); box-shadow:var(--shadow-2);}
+  .tf-btn.false-btn:hover{border-color:var(--coral); background:#fef4f1; transform:translateY(-2px); box-shadow:var(--shadow-2);}
+  .tf-btn:disabled{cursor:default; transform:none;}
+  .tf-btn.correct{
+    background:linear-gradient(160deg,#e6f6ee,#cdeede);
+    border-color:var(--teal); color:#1f5e56;
+  }
+  .tf-btn.wrong{
+    background:linear-gradient(160deg,#fde8e4,#f9cfc7);
+    border-color:var(--coral); color:#8f3f2d;
+  }
+
+  /* Memory */
+  .mem-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+    max-width:460px; margin:0 auto;
+  }
+  .mem-card{
+    aspect-ratio:1/1; padding:0; border:none; background:transparent;
+    perspective:900px; cursor:pointer;
+  }
+  .mem-inner{
+    position:relative; display:block; width:100%; height:100%;
+    transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.4,1.4,.55,1);
+  }
+  .mem-card.flipped .mem-inner{transform:rotateY(180deg);}
+  .mem-front,.mem-back{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    border-radius:16px; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    font-size:clamp(22px,6vw,34px);
+  }
+  .mem-front{
+    background:linear-gradient(150deg,#4a3f6b 0%,#6b5b95 100%);
+    color:rgba(255,255,255,.85);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.2) inset,
+      0 6px 16px -4px rgba(74,63,107,.4),
+      0 12px 28px -8px rgba(74,63,107,.3);
+  }
+  .mem-back{
+    background:linear-gradient(150deg,#ffffff 0%,#fbf8f3 100%);
+    transform:rotateY(180deg);
+    box-shadow:inset 0 0 0 2px rgba(107,91,149,.22), 0 4px 12px -2px rgba(26,36,56,.10);
+  }
+  .mem-card.matched .mem-back{
+    background:linear-gradient(150deg,#e6f6ee 0%,#cdeede 100%);
+    box-shadow:inset 0 0 0 2px rgba(45,122,111,.5), 0 4px 12px -2px rgba(45,122,111,.2);
+  }
+  .mem-card.matched{animation:pop .4s cubic-bezier(.4,1.6,.6,1);}
+  @keyframes pop{50%{transform:scale(1.1);}}
+
+  /* Words */
+  .hint{
+    text-align:center; font-weight:600; color:var(--ink-2);
+    font-size:1rem; line-height:1.6;
+    background:linear-gradient(160deg,#fbf8f3,#f5f0e6);
+    border:1px solid var(--line); border-radius:14px;
+    padding:14px 18px; margin-bottom:14px;
+    box-shadow:var(--shadow-inset);
+  }
+  .slots{display:flex; gap:9px; justify-content:center; flex-wrap:wrap; min-height:66px; margin:22px 0;}
+  .slot{
+    width:50px; height:60px; border-radius:14px; background:var(--surface);
+    border:2px dashed #cdc3ad;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; font-weight:800; color:var(--ink);
+    transition:all .2s; font-family:'El Messiri',serif;
+  }
+  .slot.filled{
+    border-style:solid; border-color:var(--accent);
+    background:linear-gradient(160deg,#f5f2ff,#ece7fb);
+    box-shadow:var(--shadow-1);
+  }
+  .slot.ok{
+    background:linear-gradient(160deg,#e6f6ee,#cdeede);
+    border-color:var(--teal); color:#1f5e56;
+  }
+  .slot.bad{
+    background:linear-gradient(160deg,#fde8e4,#f9cfc7);
+    border-color:var(--coral); color:#8f3f2d;
+    animation:shake .4s;
+  }
+  .letters{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+  .letter-btn{
+    width:56px; height:56px; border-radius:15px;
+    border:1px solid var(--line); background:var(--surface);
+    box-shadow:var(--shadow-1), var(--shadow-inset);
+    font-size:1.5rem; font-weight:800; color:var(--accent);
+    cursor:pointer; font-family:'El Messiri',serif;
+    transition:all .15s;
+  }
+  .letter-btn:hover{border-color:#c9bfd9; transform:translateY(-2px); box-shadow:var(--shadow-2);}
+  .letter-btn:active{transform:translateY(0) scale(.96);}
+  .letter-btn.used{opacity:.22; pointer-events:none;}
+
+  /* Quiz generic */
+  .question{
+    text-align:center;
+    font-family:'El Messiri',serif; font-weight:700;
+    font-size:clamp(1.1rem,4.2vw,1.5rem);
+    color:var(--ink); margin:22px 0; line-height:1.6;
+    letter-spacing:-.01em;
+  }
+  .question b{color:var(--accent); font-weight:700;}
+  .opts-list{display:flex; flex-direction:column; gap:10px;}
+  .opts-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .option{
+    width:100%; text-align:right;
+    border:1px solid var(--line); background:var(--surface);
+    border-radius:14px; padding:15px 18px;
+    font-size:1rem; font-weight:600; color:var(--ink);
+    cursor:pointer; transition:all .18s;
+    box-shadow:var(--shadow-1);
+    display:flex; align-items:center; gap:12px;
+  }
+  .option .opt-emoji{font-size:1.6rem; line-height:1; flex-shrink:0;}
+  .option:hover{
+    border-color:var(--accent); background:#faf7ff;
+    transform:translateY(-1px); box-shadow:var(--shadow-2);
+  }
+  .option:disabled{cursor:default; transform:none;}
+  .option.correct{
+    background:linear-gradient(160deg,#e6f6ee,#cdeede);
+    border-color:var(--teal); color:#1f5e56;
+  }
+  .option.wrong{
+    background:linear-gradient(160deg,#fde8e4,#f9cfc7);
+    border-color:var(--coral); color:#8f3f2d;
+  }
+
+  .bar{
+    height:8px; background:#efeade; border-radius:99px;
+    overflow:hidden; margin-bottom:10px;
+    box-shadow:inset 0 1px 2px rgba(26,36,56,.06);
+  }
+  .bar i{
+    display:block; height:100%; width:100%;
+    border-radius:99px;
+    background:linear-gradient(90deg,var(--teal) 0%,var(--gold) 60%,var(--coral) 100%);
+    transition:width .4s linear;
+  }
+
+  .modal{
+    position:fixed; inset:0; z-index:200; display:none;
+    align-items:center; justify-content:center; padding:20px;
+    background:rgba(26,36,56,.5);
+    backdrop-filter:blur(8px) saturate(120%);
+    -webkit-backdrop-filter:blur(8px) saturate(120%);
+  }
+  .modal.show{display:flex; animation:fadeIn .25s;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  .modal-box{
+    background:var(--surface); border-radius:28px;
+    padding:36px 28px 28px; width:100%; max-width:420px;
+    text-align:center; animation:popIn .5s cubic-bezier(.3,1.4,.5,1);
+    box-shadow:0 30px 80px -20px rgba(26,36,56,.5), var(--shadow-inset);
+    border:1px solid rgba(255,255,255,.8);
+  }
+  @keyframes popIn{from{transform:scale(.85); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .modal-emoji{font-size:3.4rem; line-height:1; margin-bottom:6px;}
+  .modal-box h3{
+    font-family:'El Messiri',serif; font-weight:700;
+    margin:8px 0 8px; font-size:1.5rem;
+    color:var(--ink); letter-spacing:-.01em;
+  }
+  .modal-box p{margin:0 0 18px; color:var(--ink-2); font-weight:500; font-size:.95rem; line-height:1.65;}
+  .modal-stars{font-size:2.1rem; letter-spacing:8px; margin-bottom:24px; line-height:1;}
+  .modal-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+  .footer{
+    text-align:center; padding:28px 20px;
+    font-size:.8rem; color:var(--muted); font-weight:500;
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+  }
+  .footer .dot{width:3px; height:3px; border-radius:50%; background:var(--muted); opacity:.4;}
+
+  @media (max-width:420px){
+    .slot{width:44px; height:54px; font-size:1.3rem;}
+    .letter-btn{width:50px; height:50px; font-size:1.35rem;}
+    .card-panel{padding:22px 16px;}
+    .topbar{padding:12px 16px; gap:10px;}
+    .brand{font-size:1rem;}
+    .brand-mark{width:30px; height:30px; font-size:.95rem;}
+    .opts-grid{grid-template-columns:1fr;}
+    .tf-buttons{grid-template-columns:1fr;}
+    .simple-option{flex:1 1 100px; max-width:160px; min-height:100px;}
+    .simple-option .opt-emoji{font-size:2rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🏫</div>
+    <span>مدرستي</span>
+  </div>
+  <div class="stars-pill">⭐ <span id="starCount">0</span></div>
+  <button class="icon-btn" id="soundBtn" title="الصوت">🔊</button>
+</header>
+
+<main>
+
+  <!-- ================= الرئيسية ================= -->
+  <section id="screen-home" class="screen active">
+    <div class="hero">
+      <div class="eyebrow">تجربة تعليمية تفاعلية</div>
+      <h1 class="hero-title">أهلاً بيك في عالم<br><em>مدرستي وكلنا نعمل</em></h1>
+      <p class="hero-sub">16 لعبة تعليمية سهلة وممتعة لطلابنا الأعزاء. اختار لعبة وابدأ، واجمع النجوم! ⭐</p>
+      <div class="divider"></div>
+      <div class="themes-note">
+        <span class="theme-badge">🏫 <b>مدرستي</b> — المدرس • الفناء • المكتبة • معمل الوسائط</span>
+        <span class="theme-badge">🎣 <b>كلنا نعمل</b> — الصياد • بورسعيد • السياحة</span>
+      </div>
+    </div>
+
+    <div class="section-label">🏫 مدرستي <span class="count">4 ألعاب</span></div>
+    <div class="games-grid">
+      <button class="game-card gc-purple" data-game="memory">
+        <span class="g-emoji">🧠</span>
+        <span class="g-title">ذاكرة المدرسة</span>
+        <span class="g-desc">اقلب الكروت ووصل الصور</span>
+      </button>
+      <button class="game-card gc-green" data-game="words">
+        <span class="g-emoji">🔤</span>
+        <span class="g-title">كلمات سهلة</span>
+        <span class="g-desc">رتّب حروف الكلمة</span>
+      </button>
+      <button class="game-card gc-plum" data-game="places">
+        <span class="g-emoji">🏛️</span>
+        <span class="g-title">أماكن مدرستي</span>
+        <span class="g-desc">فين بنلعب وفين بنقرا؟</span>
+      </button>
+      <button class="game-card gc-sky" data-game="tools">
+        <span class="g-emoji">🎒</span>
+        <span class="g-title">أدوات المدرسة</span>
+        <span class="g-desc">ده إيه؟ قلم ولا كتاب؟</span>
+      </button>
+    </div>
+
+    <div class="section-label">🎣 كلنا نعمل <span class="count">4 ألعاب</span></div>
+    <div class="games-grid">
+      <button class="game-card gc-blue" data-game="jobs">
+        <span class="g-emoji">👨‍🏫</span>
+        <span class="g-title">كلنا نعمل</span>
+        <span class="g-desc">الصياد وبورسعيد والسياحة</span>
+      </button>
+      <button class="game-card gc-ocean" data-game="sea">
+        <span class="g-emoji">🐟</span>
+        <span class="g-title">سكان البحر</span>
+        <span class="g-desc">مين بيعيش في البحر؟</span>
+      </button>
+      <button class="game-card gc-forest" data-game="portsaid">
+        <span class="g-emoji">🏖️</span>
+        <span class="g-title">بورسعيد الساحرة</span>
+        <span class="g-desc">مدينة البحر والميناء</span>
+      </button>
+      <button class="game-card gc-rose" data-game="classify">
+        <span class="g-emoji">🧭</span>
+        <span class="g-title">صياد ولا سياحة؟</span>
+        <span class="g-desc">صنّف كل أداة</span>
+      </button>
+    </div>
+
+    <div class="section-label">🌈 ألعاب بسيطة <span class="count">5 ألعاب</span></div>
+    <div class="games-grid">
+      <button class="game-card gc-pink" data-game="colors">
+        <span class="g-emoji">🎨</span>
+        <span class="g-title">الألوان</span>
+        <span class="g-desc">إيه لون التفاحة؟</span>
+      </button>
+      <button class="game-card gc-sun" data-game="counting">
+        <span class="g-emoji">🔢</span>
+        <span class="g-title">عدّ معايا</span>
+        <span class="g-desc">كام تفاحة؟ عدّ من 1 لـ 5</span>
+      </button>
+      <button class="game-card gc-green" data-game="animals">
+        <span class="g-emoji">🐾</span>
+        <span class="g-title">الحيوانات</span>
+        <span class="g-desc">ده إيه؟ كلب ولا قطة؟</span>
+      </button>
+      <button class="game-card gc-orange" data-game="food">
+        <span class="g-emoji">🍎</span>
+        <span class="g-title">الأكل الصحي</span>
+        <span class="g-desc">ده أكل صحي؟</span>
+      </button>
+      <button class="game-card gc-forest" data-game="vehicles">
+        <span class="g-emoji">🚗</span>
+        <span class="g-title">المواصلات</span>
+        <span class="g-desc">عربية ولا طيارة؟</span>
+      </button>
+    </div>
+
+    <div class="section-label">🎯 ألعاب إضافية <span class="count">3 ألعاب</span></div>
+    <div class="games-grid">
+      <button class="game-card gc-orange" data-game="truefalse">
+        <span class="g-emoji">✅</span>
+        <span class="g-title">صح أم خطأ</span>
+        <span class="g-desc">اختبر معلوماتك</span>
+      </button>
+      <button class="game-card gc-sky" data-game="math">
+        <span class="g-emoji">⚡</span>
+        <span class="g-title">حساب سهل</span>
+        <span class="g-desc">جمع أرقام صغيرة</span>
+      </button>
+      <button class="game-card gc-pink" data-game="teamwork">
+        <span class="g-emoji">🤝</span>
+        <span class="g-title">مواقف ومساعدة</span>
+        <span class="g-desc">اختار أحسن تصرف</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= الذاكرة ================= -->
+  <section id="screen-memory" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🧠 ذاكرة المدرسة</h2>
+      <div class="hud">
+        <span>حركات: <b id="memMoves">0</b></span>
+        <span>الوقت: <b id="memTime">0</b>ث</span>
+      </div>
+    </div>
+    <div class="mem-grid" id="memGrid"></div>
+  </section>
+
+  <!-- ================= الكلمات ================= -->
+  <section id="screen-words" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🔤 كلمات سهلة</h2>
+      <div class="hud"><span>كلمة <b id="wordRound">1</b> من <b>6</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="hint" id="wordHint"></div>
+      <div class="slots" id="wordSlots"></div>
+      <div class="letters" id="wordLetters"></div>
+      <div class="row">
+        <button class="btn ghost" id="wordClear">🧹 مسح</button>
+        <button class="btn ghost" id="wordSkip">⏭️ تخطي</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= أماكن مدرستي ================= -->
+  <section id="screen-places" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🏛️ أماكن مدرستي</h2>
+      <div class="hud"><span>سؤال <b id="placeRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="question" id="placeQ">…</div>
+      <div class="opts-list" id="placeOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= أدوات المدرسة ================= -->
+  <section id="screen-tools" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🎒 أدوات المدرسة</h2>
+      <div class="hud"><span>سؤال <b id="toolRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="toolEmoji">✏️</div>
+      <div class="simple-question" id="toolQ">ده إيه؟</div>
+      <div class="simple-options" id="toolOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= كلنا نعمل ================= -->
+  <section id="screen-jobs" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>👨‍🏫 كلنا نعمل</h2>
+      <div class="hud"><span>سؤال <b id="jobRound">1</b> من <b>12</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="question" id="jobQ">…</div>
+      <div class="opts-list" id="jobOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= سكان البحر ================= -->
+  <section id="screen-sea" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🐟 سكان البحر</h2>
+      <div class="hud"><span>سؤال <b id="seaRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="seaEmoji">🐟</div>
+      <div class="simple-question" id="seaQ">ده إيه؟</div>
+      <div class="simple-options" id="seaOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= بورسعيد ================= -->
+  <section id="screen-portsaid" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🏖️ بورسعيد الساحرة</h2>
+      <div class="hud"><span>سؤال <b id="psRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="question" id="psQ">…</div>
+      <div class="opts-list" id="psOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= صنّف ================= -->
+  <section id="screen-classify" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🧭 صياد ولا سياحة؟</h2>
+      <div class="hud"><span>سؤال <b id="classifyRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-question" id="classifyQ">…</div>
+      <div class="simple-options" id="classifyOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= الألوان ================= -->
+  <section id="screen-colors" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🎨 الألوان</h2>
+      <div class="hud"><span>سؤال <b id="colorRound">1</b> من <b>8</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="colorEmoji">🍎</div>
+      <div class="simple-question" id="colorQ">إيه لون التفاحة؟</div>
+      <div class="simple-options" id="colorOpts" style="justify-content:center; gap:20px;"></div>
+    </div>
+  </section>
+
+  <!-- ================= العدّ ================= -->
+  <section id="screen-counting" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🔢 عدّ معايا</h2>
+      <div class="hud"><span>سؤال <b id="countRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji-row" id="countEmoji">🍎🍎🍎</div>
+      <div class="simple-question">كام واحد؟</div>
+      <div class="simple-options" id="countOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= الحيوانات ================= -->
+  <section id="screen-animals" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🐾 الحيوانات</h2>
+      <div class="hud"><span>سؤال <b id="animalRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="animalEmoji">🐕</div>
+      <div class="simple-question" id="animalQ">ده إيه؟</div>
+      <div class="simple-options" id="animalOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= الأكل الصحي ================= -->
+  <section id="screen-food" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🍎 الأكل الصحي</h2>
+      <div class="hud"><span>سؤال <b id="foodRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="foodEmoji">🍎</div>
+      <div class="simple-question" id="foodQ">ده أكل صحي؟</div>
+      <div class="tf-buttons">
+        <button class="tf-btn true-btn" id="foodYes">
+          <span class="tf-icon">✅</span>
+          <span>نعم</span>
+        </button>
+        <button class="tf-btn false-btn" id="foodNo">
+          <span class="tf-icon">❌</span>
+          <span>لا</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= المواصلات ================= -->
+  <section id="screen-vehicles" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🚗 المواصلات</h2>
+      <div class="hud"><span>سؤال <b id="vehicleRound">1</b> من <b>10</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="simple-emoji" id="vehicleEmoji">🚗</div>
+      <div class="simple-question" id="vehicleQ">ده إيه؟</div>
+      <div class="simple-options" id="vehicleOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= صح أم خطأ ================= -->
+  <section id="screen-truefalse" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>✅ صح أم خطأ</h2>
+      <div class="hud"><span>سؤال <b id="tfRound">1</b> من <b>12</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="question" id="tfQ">…</div>
+      <div class="tf-buttons">
+        <button class="tf-btn true-btn" id="tfTrue">
+          <span class="tf-icon">✅</span>
+          <span>صح</span>
+        </button>
+        <button class="tf-btn false-btn" id="tfFalse">
+          <span class="tf-icon">❌</span>
+          <span>خطأ</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= الحساب ================= -->
+  <section id="screen-math" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>⚡ حساب سهل</h2>
+      <div class="hud">
+        <span>النتيجة: <b id="mathScore">0</b></span>
+        <span>الوقت: <b id="mathTime">90</b>ث</span>
+      </div>
+    </div>
+    <div class="card-panel">
+      <div class="bar"><i id="mathBar"></i></div>
+      <div class="question" id="mathQ">…</div>
+      <div class="opts-grid" id="mathOpts"></div>
+    </div>
+  </section>
+
+  <!-- ================= المواقف ================= -->
+  <section id="screen-teamwork" class="screen">
+    <div class="game-head">
+      <button class="back-btn" data-back>← رجوع</button>
+      <h2>🤝 مواقف ومساعدة</h2>
+      <div class="hud"><span>سؤال <b id="sitRound">1</b> من <b id="sitTotal">8</b></span></div>
+    </div>
+    <div class="card-panel">
+      <div class="question" id="sitQ">…</div>
+      <div class="opts-list" id="sitOpts"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>🎓 تجربة تعليمية تفاعلية</span>
+  <span class="dot"></span>
+  <span>مدرستي & كلنا نعمل</span>
+  <span class="dot"></span>
+  <span>بورسعيد</span>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-emoji" id="modalEmoji">🎉</div>
+    <h3 id="modalTitle">برافو!</h3>
+    <p id="modalMsg"></p>
+    <div class="modal-stars" id="modalStars"></div>
+    <div class="modal-actions">
+      <button class="btn primary" id="modalAgain">العب تاني 🔁</button>
+      <button class="btn ghost" id="modalHome">الرئيسية 🏠</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const ri = n => Math.floor(Math.random() * n);
+const shuffle = arr => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(v => v[1]);
+
+let timers = [];
+function later(fn, ms){ const id = setTimeout(fn, ms); timers.push(id); return id; }
+function every(fn, ms){ const id = setInterval(fn, ms); timers.push(id); return id; }
+function runCleanups(){ timers.forEach(id => { clearTimeout(id); clearInterval(id); }); timers = []; }
+
+/* ===== الصوت ===== */
+let actx = null, muted = false;
+function tone(freq, dur = .08, type = 'sine', vol = .07){
+  if (muted) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + dur);
+    o.connect(g).connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + dur);
+  } catch(e){}
+}
+const sClick = () => tone(520, .05);
+const sGood  = () => { tone(660, .09); later(() => tone(940, .13), 90); };
+const sBad   = () => tone(180, .18, 'sawtooth', .05);
+const sWin   = () => [523, 659, 784, 1047].forEach((f, i) => later(() => tone(f, .16), i * 110));
+
+/* ===== النجوم ===== */
+let totalStars = 0;
+try { totalStars = parseInt(localStorage.getItem('schoolGamesStars') || '0', 10) || 0; } catch(e){}
+function addStars(n){
+  totalStars += n;
+  try { localStorage.setItem('schoolGamesStars', totalStars); } catch(e){}
+  $('#starCount').textContent = totalStars;
+}
+$('#starCount').textContent = totalStars;
+
+$('#soundBtn').onclick = () => {
+  muted = !muted;
+  $('#soundBtn').textContent = muted ? '🔇' : '🔊';
+  if (!muted) sClick();
+};
+
+/* ===== التنقل ===== */
+function showScreen(id){
+  $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goHome(){
+  runCleanups();
+  $('#modal').classList.remove('show');
+  showScreen('screen-home');
+}
+$$('[data-back]').forEach(b => b.onclick = goHome);
+
+let modalAgainFn = null;
+function showResult(title, msg, stars, againFn){
+  $('#modalTitle').textContent = title;
+  $('#modalMsg').textContent = msg;
+  $('#modalStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(Math.max(0, 3 - stars));
+  $('#modalEmoji').textContent = stars === 3 ? '🏆' : stars === 2 ? '🎉' : '👏';
+  modalAgainFn = againFn;
+  $('#modal').classList.add('show');
+  sWin();
+}
+$('#modalAgain').onclick = () => {
+  $('#modal').classList.remove('show');
+  runCleanups();
+  if (modalAgainFn) modalAgainFn();
+};
+$('#modalHome').onclick = goHome;
+
+/* =========================================================
+   Helper: لعبة اختبار بسيط (إيموجي كبير + خيارات)
+   ========================================================= */
+function makeEmojiQuiz({ screenId, items, roundEl, emojiEl, qEl, optsEl,
+  title, maxRounds = 8, emojiSize = 'large', renderEmoji = null, optionEmoji = true }) {
+  let state = { round: 0, score: 0, list: [], done: false };
+
+  function start(){
+    runCleanups();
+    state.round = 0;
+    state.score = 0;
+    state.list = shuffle(items).slice(0, maxRounds);
+    render();
+  }
+
+  function render(){
+    if (state.round >= state.list.length) return finish();
+    const item = state.list[state.round];
+    state.done = false;
+    $(roundEl).textContent = state.round + 1;
+    $(emojiEl).innerHTML = renderEmoji ? renderEmoji(item) : item.emoji;
+    $(qEl).textContent = item.q || 'ده إيه؟';
+    const box = $(optsEl);
+    box.innerHTML = '';
+    shuffle(item.opts).forEach(o => {
+      const b = document.createElement('button');
+      b.className = 'simple-option';
+      b.dataset.ans = o;
+      const emojiPart = o.emoji ? `<span class="opt-emoji">${o.emoji}</span>` : '';
+      const textPart = `<span class="opt-text">${o.text || o}</span>`;
+      b.innerHTML = emojiPart + textPart;
+      b.onclick = () => answer(b, o, item);
+      box.appendChild(b);
+    });
+  }
+
+  function answer(btn, choice, item){
+    if (state.done) return;
+    state.done = true;
+    const all = Array.from($(optsEl).children);
+    all.forEach(b => b.disabled = true);
+    const choiceKey = choice.text || choice;
+    if (choiceKey === item.ans){
+      btn.classList.add('correct');
+      sGood();
+      state.score++;
+    } else {
+      btn.classList.add('wrong');
+      all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+      sBad();
+    }
+    later(() => { state.round++; render(); }, 900);
+  }
+
+  function finish(){
+    const sc = state.score, tot = state.list.length;
+    const stars = sc >= tot - 1 ? 3 : sc >= Math.ceil(tot * 0.6) ? 2 : 1;
+    addStars(stars);
+    showResult(title, `أجبت صح على ${sc} من ${tot}.`, stars, () => { showScreen(screenId); start(); });
+  }
+
+  return { start };
+}
+
+/* =========================================================
+   1. ذاكرة المدرسة
+   ========================================================= */
+const MEM_ICONS = ['👩‍🏫','🏫','📚','🖥️','⚽','🎨','🔬','✏️'];
+let mem = {};
+
+function startMemory(){
+  runCleanups();
+  mem = { first: null, lock: false, matched: 0, moves: 0, secs: 0 };
+  $('#memMoves').textContent = '0';
+  $('#memTime').textContent = '0';
+  const deck = shuffle([...MEM_ICONS, ...MEM_ICONS]);
+  const grid = $('#memGrid');
+  grid.innerHTML = '';
+  deck.forEach(icon => {
+    const btn = document.createElement('button');
+    btn.className = 'mem-card';
+    btn.dataset.icon = icon;
+    btn.innerHTML = `<span class="mem-inner"><span class="mem-front">❔</span><span class="mem-back">${icon}</span></span>`;
+    btn.onclick = () => flipCard(btn);
+    grid.appendChild(btn);
+  });
+  every(() => { mem.secs++; $('#memTime').textContent = mem.secs; }, 1000);
+}
+
+function flipCard(card){
+  if (mem.lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.classList.add('flipped');
+  sClick();
+  if (!mem.first){ mem.first = card; return; }
+  mem.moves++;
+  $('#memMoves').textContent = mem.moves;
+  const a = mem.first, b = card;
+  if (a.dataset.icon === b.dataset.icon){
+    later(() => {
+      a.classList.add('matched'); b.classList.add('matched');
+      mem.matched++; mem.first = null; sGood();
+      if (mem.matched === MEM_ICONS.length) memoryWin();
+    }, 320);
+  } else {
+    mem.lock = true;
+    later(() => {
+      a.classList.remove('flipped'); b.classList.remove('flipped');
+      mem.first = null; mem.lock = false;
+    }, 800);
+  }
+}
+
+function memoryWin(){
+  runCleanups();
+  const stars = mem.moves <= 11 ? 3 : mem.moves <= 17 ? 2 : 1;
+  addStars(stars);
+  showResult('برافو عليك! 🎉',
+    `وصلت كل الصور في ${mem.moves} حركة و ${mem.secs} ثانية.`,
+    stars, () => { showScreen('screen-memory'); startMemory(); });
+}
+
+/* =========================================================
+   2. كلمات سهلة — كلمات قصيرة جداً
+   ========================================================= */
+const WORDS = [
+  { w: 'قلم',   hint: 'بنكتب بيه ✏️' },
+  { w: 'كتاب',  hint: 'بنقرا فيه 📚' },
+  { w: 'باب',   hint: 'بنفتحه وندخل منه 🚪' },
+  { w: 'بحر',   hint: 'فيه سمك ومية كتير 🌊' },
+  { w: 'سمك',   hint: 'بيعيش في البحر 🐟' },
+  { w: 'بنت',   hint: 'أخت صغيرة 👧' },
+  { w: 'ولد',   hint: 'أخ صغير 👦' },
+  { w: 'شمس',   hint: 'بتطلع في الصبح ☀️' },
+  { w: 'قمر',   hint: 'بيطلع في الليل 🌙' },
+  { w: 'مدرسة', hint: 'بنروحها كل يوم الصبح 🏫' }
+];
+
+let wordGame = {};
+
+function startWords(){
+  runCleanups();
+  wordGame = { round: 0, score: 0, list: shuffle(WORDS).slice(0, 6) };
+  renderWordRound();
+}
+
+function renderWordRound(){
+  const g = wordGame;
+  if (g.round >= g.list.length){ endWords(); return; }
+  const item = g.list[g.round];
+  g.word = item.w;
+  g.letters = shuffle(item.w.split(''));
+  g.answer = [];
+  g.done = false;
+  $('#wordHint').textContent = item.hint;
+  $('#wordRound').textContent = g.round + 1;
+  const L = $('#wordLetters');
+  L.innerHTML = '';
+  g.letters.forEach((ch, i) => {
+    const b = document.createElement('button');
+    b.className = 'letter-btn';
+    b.textContent = ch;
+    b.onclick = () => pickLetter(i, b);
+    L.appendChild(b);
+  });
+  renderSlots();
+}
+
+function renderSlots(){
+  const g = wordGame;
+  const slots = $('#wordSlots');
+  slots.innerHTML = '';
+  for (let i = 0; i < g.word.length; i++){
+    const d = document.createElement('div');
+    d.className = 'slot';
+    if (g.answer[i] !== undefined){
+      d.textContent = g.letters[g.answer[i]];
+      d.classList.add('filled');
+    }
+    slots.appendChild(d);
+  }
+}
+
+function pickLetter(i, btn){
+  const g = wordGame;
+  if (g.done || btn.classList.contains('used')) return;
+  sClick();
+  btn.classList.add('used');
+  g.answer.push(i);
+  renderSlots();
+  if (g.answer.length === g.word.length) checkWord();
+}
+
+function checkWord(){
+  const g = wordGame;
+  g.done = true;
+  const built = g.answer.map(i => g.letters[i]).join('');
+  if (built === g.word){
+    sGood();
+    $$('#wordSlots .slot').forEach(s => s.classList.add('ok'));
+    g.score++;
+    later(() => { g.round++; renderWordRound(); }, 900);
+  } else {
+    sBad();
+    $$('#wordSlots .slot').forEach(s => s.classList.add('bad'));
+    later(() => {
+      g.answer = [];
+      g.done = false;
+      $$('#wordLetters .letter-btn').forEach(b => b.classList.remove('used'));
+      renderSlots();
+    }, 800);
+  }
+}
+
+$('#wordClear').onclick = () => {
+  const g = wordGame;
+  if (g.done) return;
+  g.answer = [];
+  $$('#wordLetters .letter-btn').forEach(b => b.classList.remove('used'));
+  renderSlots();
+  sClick();
+};
+
+$('#wordSkip').onclick = () => {
+  const g = wordGame;
+  if (g.done) return;
+  g.done = true;
+  sClick();
+  later(() => { g.round++; renderWordRound(); }, 250);
+};
+
+function endWords(){
+  runCleanups();
+  const sc = wordGame.score;
+  const stars = sc >= 6 ? 3 : sc >= 4 ? 2 : 1;
+  addStars(stars);
+  showResult('خلصت الكلمات! 📝', `عرفت ${sc} كلمة من 6.`, stars,
+    () => { showScreen('screen-words'); startWords(); });
+}
+
+/* =========================================================
+   3. أماكن مدرستي — خيارين مع إيموجي
+   ========================================================= */
+const PLACES = [
+  { q: 'فين بنلعب؟ ⚽', ans: 'الفناء', opts: [{emoji:'⚽',text:'الفناء'},{emoji:'📚',text:'المكتبة'}] },
+  { q: 'فين بنقرا الكتب؟ 📚', ans: 'المكتبة', opts: [{emoji:'📚',text:'المكتبة'},{emoji:'⚽',text:'الفناء'}] },
+  { q: 'فين الكمبيوتر؟ 💻', ans: 'معمل الوسائط', opts: [{emoji:'💻',text:'معمل الوسائط'},{emoji:'📚',text:'المكتبة'}] },
+  { q: 'فين المدرس بيشرح؟ 👩‍🏫', ans: 'الفصل', opts: [{emoji:'📖',text:'الفصل'},{emoji:'⚽',text:'الفناء'}] },
+  { q: 'فين بنعمل النشاط؟ 🎨', ans: 'الفصل', opts: [{emoji:'🎨',text:'الفصل'},{emoji:'🚪',text:'الباب'}] },
+  { q: 'مين بيشرح الدرس؟ 👩‍🏫', ans: 'المدرس', opts: [{emoji:'👩‍🏫',text:'المدرس'},{emoji:'👨‍🍳',text:'الطباخ'}] },
+  { q: 'مين بيصحح الواجب؟ ✏️', ans: 'المدرس', opts: [{emoji:'👩‍🏫',text:'المدرس'},{emoji:'🐟',text:'الصياد'}] },
+  { q: 'فين نلعب كورة؟ ⚽', ans: 'الفناء', opts: [{emoji:'⚽',text:'الفناء'},{emoji:'💻',text:'المعمل'}] },
+  { q: 'فين ناخد الحصة؟ 📖', ans: 'الفصل', opts: [{emoji:'📖',text:'الفصل'},{emoji:'⚽',text:'الفناء'}] },
+  { q: 'فين بنستعير كتاب؟ 📚', ans: 'المكتبة', opts: [{emoji:'📚',text:'المكتبة'},{emoji:'💻',text:'المعمل'}] }
+];
+
+let placeGame = {};
+
+function startPlaces(){
+  runCleanups();
+  placeGame = { round: 0, score: 0, list: shuffle(PLACES) };
+  renderPlaceRound();
+}
+
+function renderPlaceRound(){
+  const g = placeGame;
+  if (g.round >= g.list.length){ endPlaces(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#placeRound').textContent = g.round + 1;
+  $('#placeQ').innerHTML = item.q;
+  const box = $('#placeOpts');
+  box.innerHTML = '';
+  shuffle(item.opts).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.dataset.ans = o.text;
+    b.innerHTML = `<span class="opt-emoji">${o.emoji}</span><span>${o.text}</span>`;
+    b.onclick = () => answerPlace(b, o.text, item);
+    box.appendChild(b);
+  });
+}
+
+function answerPlace(btn, choice, item){
+  const g = placeGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#placeOpts .option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.ans){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderPlaceRound(); }, 950);
+}
+
+function endPlaces(){
+  runCleanups();
+  const sc = placeGame.score;
+  const stars = sc >= 9 ? 3 : sc >= 6 ? 2 : 1;
+  addStars(stars);
+  showResult('عرفت أماكن مدرستي! 🏛️', `أجبت صح على ${sc} من 10.`, stars,
+    () => { showScreen('screen-places'); startPlaces(); });
+}
+
+/* =========================================================
+   4. أدوات المدرسة (جديد)
+   ========================================================= */
+const SCHOOL_TOOLS = [
+  { emoji: '✏️', ans: 'قلم',       opts: [{emoji:'✏️',text:'قلم'},{emoji:'🍎',text:'تفاحة'}] },
+  { emoji: '📚', ans: 'كتاب',      opts: [{emoji:'📚',text:'كتاب'},{emoji:'⚽',text:'كورة'}] },
+  { emoji: '🎒', ans: 'شنطة',      opts: [{emoji:'🎒',text:'شنطة'},{emoji:'🚗',text:'عربية'}] },
+  { emoji: '🖍️', ans: 'قلم ألوان', opts: [{emoji:'🖍️',text:'قلم ألوان'},{emoji:'☀️',text:'شمس'}] },
+  { emoji: '📏', ans: 'مسطرة',     opts: [{emoji:'📏',text:'مسطرة'},{emoji:'🍎',text:'تفاحة'}] },
+  { emoji: '✂️', ans: 'مقص',       opts: [{emoji:'✂️',text:'مقص'},{emoji:'🐟',text:'سمكة'}] },
+  { emoji: '📓', ans: 'كشكول',     opts: [{emoji:'📓',text:'كشكول'},{emoji:'🐶',text:'كلب'}] },
+  { emoji: '🖊️', ans: 'قلم جاف',   opts: [{emoji:'🖊️',text:'قلم جاف'},{emoji:'🌙',text:'قمر'}] },
+  { emoji: '📖', ans: 'كتاب',      opts: [{emoji:'📖',text:'كتاب'},{emoji:'🍕',text:'بيتزا'}] },
+  { emoji: '🎨', ans: 'ألوان',     opts: [{emoji:'🎨',text:'ألوان'},{emoji:'⚽',text:'كورة'}] }
+];
+
+const schoolToolsGame = makeEmojiQuiz({
+  screenId: 'screen-tools', items: SCHOOL_TOOLS, maxRounds: 8,
+  roundEl: '#toolRound', emojiEl: '#toolEmoji', qEl: '#toolQ', optsEl: '#toolOpts',
+  title: 'عرفت أدوات مدرستي! 🎒'
+});
+
+function startSchoolTools(){ schoolToolsGame.start(); }
+
+/* =========================================================
+   5. كلنا نعمل — خيارين مع إيموجي
+   ========================================================= */
+const JOBS_QUESTIONS = [
+  { q: 'مين بيصطاد السمك؟ 🎣', ans: 'الصياد',
+    opts: [{emoji:'🎣',text:'الصياد'},{emoji:'👨‍🍳',text:'الطباخ'}] },
+  { q: 'مين بيشتغل في الميناء؟ 🏗️', ans: 'عامل الميناء',
+    opts: [{emoji:'🏗️',text:'عامل الميناء'},{emoji:'👩‍🏫',text:'المعلمة'}] },
+  { q: 'مين بيرشد السائحين؟ 🗺️', ans: 'المرشد السياحي',
+    opts: [{emoji:'🗺️',text:'المرشد السياحي'},{emoji:'🐟',text:'الصياد'}] },
+  { q: 'مين بيجهز غرف الفندق؟ 🛎️', ans: 'عامل الفندق',
+    opts: [{emoji:'🛎️',text:'عامل الفندق'},{emoji:'🎣',text:'الصياد'}] },
+  { q: 'فين بيشتغل الصياد؟ 🌊', ans: 'في البحر',
+    opts: [{emoji:'🌊',text:'في البحر'},{emoji:'🏫',text:'في المدرسة'}] },
+  { q: 'فين عامل الميناء بيشتغل؟ 🏗️', ans: 'في الميناء',
+    opts: [{emoji:'🏗️',text:'في الميناء'},{emoji:'📚',text:'في المكتبة'}] },
+  { q: 'الصياد بيرجع بإيه من البحر؟ 🐟', ans: 'سمك',
+    opts: [{emoji:'🐟',text:'سمك'},{emoji:'🍎',text:'تفاح'}] },
+  { q: 'مين بياخد السائحين في رحلة؟ 🗺️', ans: 'المرشد السياحي',
+    opts: [{emoji:'🗺️',text:'المرشد السياحي'},{emoji:'🎣',text:'الصياد'}] },
+  { q: 'بورسعيد فيها إيه؟ 🚢', ans: 'ميناء',
+    opts: [{emoji:'🚢',text:'ميناء'},{emoji:'🏔️',text:'جبل'}] },
+  { q: 'مين بيساعد السائح في الفندق؟ 🛎️', ans: 'عامل الفندق',
+    opts: [{emoji:'🛎️',text:'عامل الفندق'},{emoji:'🌾',text:'الفلاح'}] },
+  { q: 'مين بيركب مركب ويصطاد؟ ⛵', ans: 'الصياد',
+    opts: [{emoji:'⛵',text:'الصياد'},{emoji:'👨‍🏫',text:'المدرس'}] },
+  { q: 'مين بيشتغل في المدرسة؟ 👩‍🏫', ans: 'المعلمة',
+    opts: [{emoji:'👩‍🏫',text:'المعلمة'},{emoji:'🎣',text:'الصياد'}] }
+];
+
+let jobGame = {};
+
+function startJobs(){
+  runCleanups();
+  jobGame = { round: 0, score: 0, list: shuffle(JOBS_QUESTIONS) };
+  renderJobRound();
+}
+
+function renderJobRound(){
+  const g = jobGame;
+  if (g.round >= g.list.length){ endJobs(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#jobRound').textContent = g.round + 1;
+  $('#jobQ').innerHTML = item.q;
+  const box = $('#jobOpts');
+  box.innerHTML = '';
+  shuffle(item.opts).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.dataset.ans = o.text;
+    b.innerHTML = `<span class="opt-emoji">${o.emoji}</span><span>${o.text}</span>`;
+    b.onclick = () => answerJob(b, o.text, item);
+    box.appendChild(b);
+  });
+}
+
+function answerJob(btn, choice, item){
+  const g = jobGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#jobOpts .option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.ans){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderJobRound(); }, 950);
+}
+
+function endJobs(){
+  runCleanups();
+  const sc = jobGame.score, tot = jobGame.list.length;
+  const stars = sc >= tot - 2 ? 3 : sc >= Math.ceil(tot * 0.6) ? 2 : 1;
+  addStars(stars);
+  showResult('شغل عظيم! 👏', `عرفت ${sc} من ${tot}.`, stars,
+    () => { showScreen('screen-jobs'); startJobs(); });
+}
+
+/* =========================================================
+   6. سكان البحر (جديد)
+   ========================================================= */
+const SEA_ITEMS = [
+  { emoji: '🐟', ans: 'سمكة',    opts: [{emoji:'🐟',text:'سمكة'},{emoji:'🐦',text:'عصفورة'}] },
+  { emoji: '🐙', ans: 'أخطبوط',  opts: [{emoji:'🐙',text:'أخطبوط'},{emoji:'🐕',text:'كلب'}] },
+  { emoji: '🦀', ans: 'كركند',   opts: [{emoji:'🦀',text:'كركند'},{emoji:'🐈',text:'قطة'}] },
+  { emoji: '🐠', ans: 'سمكة',    opts: [{emoji:'🐠',text:'سمكة'},{emoji:'🐄',text:'بقرة'}] },
+  { emoji: '🦐', ans: 'جمبري',   opts: [{emoji:'🦐',text:'جمبري'},{emoji:'🐔',text:'دجاجة'}] },
+  { emoji: '🐬', ans: 'دولفين',  opts: [{emoji:'🐬',text:'دولفين'},{emoji:'🐎',text:'حصان'}] },
+  { emoji: '🦑', ans: 'حبار',    opts: [{emoji:'🦑',text:'حبار'},{emoji:'🐑',text:'خروف'}] },
+  { emoji: '🐡', ans: 'سمكة',    opts: [{emoji:'🐡',text:'سمكة'},{emoji:'🐘',text:'فيل'}] },
+  { emoji: '🐋', ans: 'حوت',     opts: [{emoji:'🐋',text:'حوت'},{emoji:'🦁',text:'أسد'}] },
+  { emoji: '🐚', ans: 'صدفة',    opts: [{emoji:'🐚',text:'صدفة'},{emoji:'🍎',text:'تفاحة'}] }
+];
+
+const seaGame = makeEmojiQuiz({
+  screenId: 'screen-sea', items: SEA_ITEMS, maxRounds: 8,
+  roundEl: '#seaRound', emojiEl: '#seaEmoji', qEl: '#seaQ', optsEl: '#seaOpts',
+  title: 'عرفت سكان البحر! 🐟'
+});
+
+function startSea(){ seaGame.start(); }
+
+/* =========================================================
+   7. بورسعيد الساحرة (جديد)
+   ========================================================= */
+const PORT_SAID = [
+  { q: 'بورسعيد فيها إيه؟ 🚢', ans: 'ميناء',
+    opts: [{emoji:'🚢',text:'ميناء'},{emoji:'🏔️',text:'جبل'}] },
+  { q: 'فين السائح بيروح؟ 🌊', ans: 'على البحر',
+    opts: [{emoji:'🌊',text:'على البحر'},{emoji:'🏜️',text:'الصحرا'}] },
+  { q: 'الصياد بيركب إيه؟ ⛵', ans: 'مركب',
+    opts: [{emoji:'⛵',text:'مركب'},{emoji:'🚗',text:'عربية'}] },
+  { q: 'بورسعيد فيها إيه حلو؟ 🏖️', ans: 'شواطئ',
+    opts: [{emoji:'🏖️',text:'شواطئ'},{emoji:'🏔️',text:'جبال'}] },
+  { q: 'السائحين بيروحوا بورسعيد ليه؟ 🌊', ans: 'يتفرجوا على البحر',
+    opts: [{emoji:'🌊',text:'يتفرجوا على البحر'},{emoji:'📚',text:'يقراوا كتب'}] },
+  { q: 'مين بيشتغل في الميناء؟ 🏗️', ans: 'عمال الميناء',
+    opts: [{emoji:'🏗️',text:'عمال الميناء'},{emoji:'👩‍🏫',text:'المدرسين'}] },
+  { q: 'فين السائح بينام؟ 🏨', ans: 'في الفندق',
+    opts: [{emoji:'🏨',text:'في الفندق'},{emoji:'🏫',text:'في المدرسة'}] },
+  { q: 'الصياد بيرجع بإيه؟ 🐟', ans: 'سمك',
+    opts: [{emoji:'🐟',text:'سمك'},{emoji:'🍎',text:'تفاح'}] },
+  { q: 'المرشد السياحي بيلبس إيه؟ 👔', ans: 'هدوم أنيقة',
+    opts: [{emoji:'👔',text:'هدوم أنيقة'},{emoji:'🩱',text:'مايوه'}] },
+  { q: 'بورسعيد مدينة على إيه؟ 🌊', ans: 'البحر',
+    opts: [{emoji:'🌊',text:'البحر'},{emoji:'🏜️',text:'الصحرا'}] }
+];
+
+let psGame = {};
+
+function startPortSaid(){
+  runCleanups();
+  psGame = { round: 0, score: 0, list: shuffle(PORT_SAID) };
+  renderPSRound();
+}
+
+function renderPSRound(){
+  const g = psGame;
+  if (g.round >= g.list.length){ endPS(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#psRound').textContent = g.round + 1;
+  $('#psQ').innerHTML = item.q;
+  const box = $('#psOpts');
+  box.innerHTML = '';
+  shuffle(item.opts).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.dataset.ans = o.text;
+    b.innerHTML = `<span class="opt-emoji">${o.emoji}</span><span>${o.text}</span>`;
+    b.onclick = () => answerPS(b, o.text, item);
+    box.appendChild(b);
+  });
+}
+
+function answerPS(btn, choice, item){
+  const g = psGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#psOpts .option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.ans){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderPSRound(); }, 950);
+}
+
+function endPS(){
+  runCleanups();
+  const sc = psGame.score;
+  const stars = sc >= 9 ? 3 : sc >= 6 ? 2 : 1;
+  addStars(stars);
+  showResult('عرفت بورسعيد! 🏖️', `أجبت صح على ${sc} من 10.`, stars,
+    () => { showScreen('screen-portsaid'); startPortSaid(); });
+}
+
+/* =========================================================
+   8. صنّف: صياد ولا سياحة؟ (جديد - خيارين بس)
+   ========================================================= */
+const CLASSIFY_ITEMS = [
+  { emoji: '🎣', name: 'شبكة الصيد', ans: 'صياد' },
+  { emoji: '🗺️', name: 'الخريطة', ans: 'سياحة' },
+  { emoji: '⛵', name: 'المركب', ans: 'صياد' },
+  { emoji: '🏨', name: 'الفندق', ans: 'سياحة' },
+  { emoji: '🐟', name: 'السمك', ans: 'صياد' },
+  { emoji: '🏖️', name: 'الشاطئ', ans: 'سياحة' },
+  { emoji: '🌊', name: 'البحر', ans: 'صياد' },
+  { emoji: '🎒', name: 'السائح', ans: 'سياحة' },
+  { emoji: '🚢', name: 'السفينة', ans: 'صياد' },
+  { emoji: '🛎️', name: 'جرس الفندق', ans: 'سياحة' }
+];
+
+const CLASSIFY_OPTIONS = [
+  { emoji: '🎣', text: 'صياد' },
+  { emoji: '🏖️', text: 'سياحة' }
+];
+
+let classifyGame = {};
+
+function startClassify(){
+  runCleanups();
+  classifyGame = { round: 0, score: 0, list: shuffle(CLASSIFY_ITEMS) };
+  renderClassifyRound();
+}
+
+function renderClassifyRound(){
+  const g = classifyGame;
+  if (g.round >= g.list.length){ endClassify(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#classifyRound').textContent = g.round + 1;
+  $('#classifyQ').innerHTML = `<div style="font-size:5rem; margin-bottom:16px;">${item.emoji}</div>
+    <div style="font-size:1.3rem;">${item.name}</div>
+    <div style="font-size:1rem; color:var(--muted); margin-top:8px;">ده بتاع مين؟</div>`;
+  const box = $('#classifyOpts');
+  box.innerHTML = '';
+  CLASSIFY_OPTIONS.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'simple-option';
+    b.dataset.ans = o.text;
+    b.innerHTML = `<span class="opt-emoji">${o.emoji}</span><span class="opt-text">${o.text}</span>`;
+    b.onclick = () => answerClassify(b, o.text, item);
+    box.appendChild(b);
+  });
+}
+
+function answerClassify(btn, choice, item){
+  const g = classifyGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#classifyOpts .simple-option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.ans){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderClassifyRound(); }, 950);
+}
+
+function endClassify(){
+  runCleanups();
+  const sc = classifyGame.score;
+  const stars = sc >= 9 ? 3 : sc >= 6 ? 2 : 1;
+  addStars(stars);
+  showResult('تصنيف ممتاز! 🧭', `صح ${sc} من 10.`, stars,
+    () => { showScreen('screen-classify'); startClassify(); });
+}
+
+/* =========================================================
+   9. الألوان (جديد) — أزرار ملوّنة
+   ========================================================= */
+const COLORS = [
+  { emoji: '🍎', name: 'التفاحة',   ans: 'أحمر',    hex: '#e53935' },
+  { emoji: '🍋', name: 'الليمونة',  ans: 'أصفر',    hex: '#fdd835' },
+  { emoji: '🥦', name: 'البروكلي',  ans: 'أخضر',    hex: '#43a047' },
+  { emoji: '🫐', name: 'التوت',     ans: 'أزرق',    hex: '#1e88e5' },
+  { emoji: '🍇', name: 'العنب',     ans: 'بنفسجي',  hex: '#8e24aa' },
+  { emoji: '🍊', name: 'البرتقالة', ans: 'برتقالي', hex: '#fb8c00' },
+  { emoji: '🍌', name: 'الموز',     ans: 'أصفر',    hex: '#fdd835' },
+  { emoji: '🍓', name: 'الفراولة',  ans: 'أحمر',    hex: '#e53935' }
+];
+
+const COLOR_CHOICES = [
+  { text: 'أحمر',    hex: '#e53935' },
+  { text: 'أصفر',    hex: '#fdd835' },
+  { text: 'أخضر',    hex: '#43a047' },
+  { text: 'أزرق',    hex: '#1e88e5' },
+  { text: 'بنفسجي',  hex: '#8e24aa' },
+  { text: 'برتقالي', hex: '#fb8c00' }
+];
+
+let colorGame = {};
+
+function startColors(){
+  runCleanups();
+  colorGame = { round: 0, score: 0, list: shuffle(COLORS).slice(0, 6) };
+  renderColorRound();
+}
+
+function renderColorRound(){
+  const g = colorGame;
+  if (g.round >= g.list.length){ endColors(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#colorRound').textContent = g.round + 1;
+  $('#colorEmoji').textContent = item.emoji;
+  $('#colorQ').textContent = `إيه لون ${item.name}؟`;
+  const box = $('#colorOpts');
+  box.innerHTML = '';
+  // 4 choices (correct + 3 random)
+  const correct = COLOR_CHOICES.find(c => c.text === item.ans);
+  const others = shuffle(COLOR_CHOICES.filter(c => c.text !== item.ans)).slice(0, 3);
+  shuffle([correct, ...others]).forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'color-option';
+    b.dataset.ans = c.text;
+    b.style.background = c.hex;
+    b.title = c.text;
+    b.onclick = () => answerColor(b, c.text, item);
+    box.appendChild(b);
+  });
+}
+
+function answerColor(btn, choice, item){
+  const g = colorGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#colorOpts .color-option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.ans){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === item.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderColorRound(); }, 1000);
+}
+
+function endColors(){
+  runCleanups();
+  const sc = colorGame.score;
+  const stars = sc >= 5 ? 3 : sc >= 3 ? 2 : 1;
+  addStars(stars);
+  showResult('عرفت الألوان! 🎨', `صح ${sc} من 6.`, stars,
+    () => { showScreen('screen-colors'); startColors(); });
+}
+
+/* =========================================================
+   10. عدّ معايا (جديد)
+   ========================================================= */
+const COUNT_ITEMS = [
+  { emoji: '🍎', count: 2 }, { emoji: '🍊', count: 3 },
+  { emoji: '⭐', count: 1 }, { emoji: '🌸', count: 4 },
+  { emoji: '⚽', count: 2 }, { emoji: '🍩', count: 5 },
+  { emoji: '🎈', count: 3 }, { emoji: '🐟', count: 1 },
+  { emoji: '🦋', count: 2 }, { emoji: '🍓', count: 4 }
+];
+
+let countGame = {};
+
+function startCounting(){
+  runCleanups();
+  countGame = { round: 0, score: 0, list: shuffle(COUNT_ITEMS).slice(0, 8) };
+  renderCountRound();
+}
+
+function renderCountRound(){
+  const g = countGame;
+  if (g.round >= g.list.length){ endCounting(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#countRound').textContent = g.round + 1;
+  $('#countEmoji').textContent = item.emoji.repeat(item.count);
+  const box = $('#countOpts');
+  box.innerHTML = '';
+  // 3 options: correct + 2 near ones
+  const set = new Set([item.count]);
+  let guard = 0;
+  while (set.size < 3 && guard++ < 30){
+    const v = item.count + (ri(2) ? 1 : -1) * (ri(3) + 1);
+    if (v >= 1 && v <= 6 && v !== item.count) set.add(v);
+  }
+  while (set.size < 3) set.add(set.size + 1);
+  shuffle([...set]).forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'simple-option';
+    b.dataset.ans = String(n);
+    b.innerHTML = `<span class="opt-text" style="font-size:2.2rem;">${n}</span>`;
+    b.onclick = () => answerCount(b, n, item);
+    box.appendChild(b);
+  });
+}
+
+function answerCount(btn, choice, item){
+  const g = countGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#countOpts .simple-option');
+  all.forEach(b => b.disabled = true);
+  if (choice === item.count){ btn.classList.add('correct'); sGood(); g.score++; }
+  else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ans === String(item.count)) b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderCountRound(); }, 950);
+}
+
+function endCounting(){
+  runCleanups();
+  const sc = countGame.score;
+  const stars = sc >= 7 ? 3 : sc >= 5 ? 2 : 1;
+  addStars(stars);
+  showResult('عرفت تعدّ! 🔢', `صح ${sc} من 8.`, stars,
+    () => { showScreen('screen-counting'); startCounting(); });
+}
+
+/* =========================================================
+   11. الحيوانات (جديد)
+   ========================================================= */
+const ANIMALS = [
+  { emoji: '🐕', ans: 'كلب',      opts: [{emoji:'🐕',text:'كلب'},{emoji:'🐈',text:'قطة'}] },
+  { emoji: '🐈', ans: 'قطة',      opts: [{emoji:'🐈',text:'قطة'},{emoji:'🐕',text:'كلب'}] },
+  { emoji: '🐄', ans: 'بقرة',     opts: [{emoji:'🐄',text:'بقرة'},{emoji:'🐔',text:'دجاجة'}] },
+  { emoji: '🐔', ans: 'دجاجة',    opts: [{emoji:'🐔',text:'دجاجة'},{emoji:'🐑',text:'خروف'}] },
+  { emoji: '🐑', ans: 'خروف',     opts: [{emoji:'🐑',text:'خروف'},{emoji:'🐄',text:'بقرة'}] },
+  { emoji: '🦁', ans: 'أسد',      opts: [{emoji:'🦁',text:'أسد'},{emoji:'🐈',text:'قطة'}] },
+  { emoji: '🐘', ans: 'فيل',      opts: [{emoji:'🐘',text:'فيل'},{emoji:'🐕',text:'كلب'}] },
+  { emoji: '🐦', ans: 'عصفورة',   opts: [{emoji:'🐦',text:'عصفورة'},{emoji:'🐟',text:'سمكة'}] },
+  { emoji: '🐎', ans: 'حصان',     opts: [{emoji:'🐎',text:'حصان'},{emoji:'🐄',text:'بقرة'}] },
+  { emoji: '🐇', ans: 'أرنب',     opts: [{emoji:'🐇',text:'أرنب'},{emoji:'🐈',text:'قطة'}] }
+];
+
+const animalsGame = makeEmojiQuiz({
+  screenId: 'screen-animals', items: ANIMALS, maxRounds: 8,
+  roundEl: '#animalRound', emojiEl: '#animalEmoji', qEl: '#animalQ', optsEl: '#animalOpts',
+  title: 'عرفت الحيوانات! 🐾'
+});
+
+function startAnimals(){ animalsGame.start(); }
+
+/* =========================================================
+   12. الأكل الصحي (جديد)
+   ========================================================= */
+const FOOD = [
+  { emoji: '🍎', name: 'تفاحة',       healthy: true },
+  { emoji: '🍕', name: 'بيتزا',        healthy: false },
+  { emoji: '🥕', name: 'جزر',          healthy: true },
+  { emoji: '🍫', name: 'شوكولاتة',     healthy: false },
+  { emoji: '🥛', name: 'لبن',          healthy: true },
+  { emoji: '🍩', name: 'دونات',        healthy: false },
+  { emoji: '🍌', name: 'موز',          healthy: true },
+  { emoji: '🍟', name: 'بطاطس مقلية',  healthy: false },
+  { emoji: '🥗', name: 'سلطة',         healthy: true },
+  { emoji: '🍬', name: 'حلاوة',        healthy: false },
+  { emoji: '🍇', name: 'عنب',          healthy: true },
+  { emoji: '🍭', name: 'مصاصة',        healthy: false }
+];
+
+let foodGame = {};
+
+function startFood(){
+  runCleanups();
+  foodGame = { round: 0, score: 0, list: shuffle(FOOD).slice(0, 8) };
+  renderFoodRound();
+}
+
+function renderFoodRound(){
+  const g = foodGame;
+  if (g.round >= g.list.length){ endFood(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#foodRound').textContent = g.round + 1;
+  $('#foodEmoji').textContent = item.emoji;
+  $('#foodQ').textContent = `${item.name} — ده أكل صحي؟`;
+  const yBtn = $('#foodYes'), nBtn = $('#foodNo');
+  yBtn.classList.remove('correct','wrong');
+  nBtn.classList.remove('correct','wrong');
+  yBtn.disabled = nBtn.disabled = false;
+  yBtn.onclick = () => answerFood(true, item, yBtn, nBtn);
+  nBtn.onclick = () => answerFood(false, item, yBtn, nBtn);
+}
+
+function answerFood(choice, item, yBtn, nBtn){
+  const g = foodGame;
+  if (g.done) return;
+  g.done = true;
+  yBtn.disabled = nBtn.disabled = true;
+  if (choice === item.healthy){
+    (choice ? yBtn : nBtn).classList.add('correct');
+    sGood();
+    g.score++;
+  } else {
+    (choice ? yBtn : nBtn).classList.add('wrong');
+    (item.healthy ? yBtn : nBtn).classList.add('correct');
+    sBad();
+  }
+  later(() => { g.round++; renderFoodRound(); }, 1000);
+}
+
+function endFood(){
+  runCleanups();
+  const sc = foodGame.score;
+  const stars = sc >= 7 ? 3 : sc >= 5 ? 2 : 1;
+  addStars(stars);
+  showResult('عرفت الأكل الصحي! 🍎', `صح ${sc} من 8.`, stars,
+    () => { showScreen('screen-food'); startFood(); });
+}
+
+/* =========================================================
+   13. المواصلات (جديد)
+   ========================================================= */
+const VEHICLES = [
+  { emoji: '🚗', ans: 'عربية',       opts: [{emoji:'🚗',text:'عربية'},{emoji:'✈️',text:'طيارة'}] },
+  { emoji: '✈️', ans: 'طيارة',       opts: [{emoji:'✈️',text:'طيارة'},{emoji:'🚢',text:'مركب'}] },
+  { emoji: '🚢', ans: 'مركب',        opts: [{emoji:'🚢',text:'مركب'},{emoji:'🚗',text:'عربية'}] },
+  { emoji: '🚲', ans: 'عجلة',        opts: [{emoji:'🚲',text:'عجلة'},{emoji:'🚌',text:'أتوبيس'}] },
+  { emoji: '🚌', ans: 'أتوبيس',      opts: [{emoji:'🚌',text:'أتوبيس'},{emoji:'🚲',text:'عجلة'}] },
+  { emoji: '🚂', ans: 'قطر',         opts: [{emoji:'🚂',text:'قطر'},{emoji:'🚗',text:'عربية'}] },
+  { emoji: '🏍️', ans: 'موتوسيكل',    opts: [{emoji:'🏍️',text:'موتوسيكل'},{emoji:'🚌',text:'أتوبيس'}] },
+  { emoji: '🚁', ans: 'هيليكوبتر',   opts: [{emoji:'🚁',text:'هيليكوبتر'},{emoji:'🚢',text:'مركب'}] },
+  { emoji: '🚕', ans: 'تاكسي',       opts: [{emoji:'🚕',text:'تاكسي'},{emoji:'🚂',text:'قطر'}] },
+  { emoji: '🚜', ans: 'تراكتور',     opts: [{emoji:'🚜',text:'تراكتور'},{emoji:'🚗',text:'عربية'}] }
+];
+
+const vehiclesGame = makeEmojiQuiz({
+  screenId: 'screen-vehicles', items: VEHICLES, maxRounds: 8,
+  roundEl: '#vehicleRound', emojiEl: '#vehicleEmoji', qEl: '#vehicleQ', optsEl: '#vehicleOpts',
+  title: 'عرفت المواصلات! 🚗'
+});
+
+function startVehicles(){ vehiclesGame.start(); }
+
+/* =========================================================
+   14. صح أم خطأ — بسيط
+   ========================================================= */
+const TRUE_FALSE = [
+  { q: 'الفناء مكان بنلعب فيه ⚽', ans: true },
+  { q: 'المكتبة فيها كتب كتير 📚', ans: true },
+  { q: 'بنلعب كورة في المكتبة ⚽📚', ans: false },
+  { q: 'المدرس بيشرح الدرس 👩‍🏫', ans: true },
+  { q: 'الصياد بيصطاد السمك 🎣', ans: true },
+  { q: 'عامل الميناء بيشتغل في المدرسة 🏗️🏫', ans: false },
+  { q: 'بورسعيد فيها ميناء 🚢', ans: true },
+  { q: 'السائح بيروح يتفرج على البحر 🌊', ans: true },
+  { q: 'الصياد بيرجع بالخضار من البحر 🥕🌊', ans: false },
+  { q: 'معمل الوسائط فيه كمبيوتر 💻', ans: true },
+  { q: 'المرشد السياحي بيرشد السائحين 🗺️', ans: true },
+  { q: 'بناخد الحصة في الفناء 📖⚽', ans: false }
+];
+
+let tfGame = {};
+
+function startTF(){
+  runCleanups();
+  tfGame = { round: 0, score: 0, list: shuffle(TRUE_FALSE) };
+  renderTFRound();
+}
+
+function renderTFRound(){
+  const g = tfGame;
+  if (g.round >= g.list.length){ endTF(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#tfRound').textContent = g.round + 1;
+  $('#tfQ').textContent = item.q;
+  const tBtn = $('#tfTrue'), fBtn = $('#tfFalse');
+  tBtn.classList.remove('correct','wrong'); fBtn.classList.remove('correct','wrong');
+  tBtn.disabled = fBtn.disabled = false;
+  tBtn.onclick = () => answerTF(true, item, tBtn, fBtn);
+  fBtn.onclick = () => answerTF(false, item, tBtn, fBtn);
+}
+
+function answerTF(choice, item, tBtn, fBtn){
+  const g = tfGame;
+  if (g.done) return;
+  g.done = true;
+  tBtn.disabled = fBtn.disabled = true;
+  if (choice === item.ans){
+    (choice ? tBtn : fBtn).classList.add('correct');
+    sGood();
+    g.score++;
+  } else {
+    (choice ? tBtn : fBtn).classList.add('wrong');
+    (item.ans ? tBtn : fBtn).classList.add('correct');
+    sBad();
+  }
+  later(() => { g.round++; renderTFRound(); }, 950);
+}
+
+function endTF(){
+  runCleanups();
+  const sc = tfGame.score, tot = tfGame.list.length;
+  const stars = sc >= tot - 1 ? 3 : sc >= Math.ceil(tot * 0.6) ? 2 : 1;
+  addStars(stars);
+  showResult('معلوماتك ممتازة! ✅', `صح ${sc} من ${tot}.`, stars,
+    () => { showScreen('screen-truefalse'); startTF(); });
+}
+
+/* =========================================================
+   15. حساب سهل — جمع بسيط فقط
+   ========================================================= */
+let mathGame = {};
+
+function startMath(){
+  runCleanups();
+  mathGame = { score: 0, time: 90, locked: false };
+  $('#mathScore').textContent = '0';
+  $('#mathTime').textContent = '90';
+  $('#mathBar').style.width = '100%';
+  nextMathQ();
+  every(() => {
+    mathGame.time--;
+    $('#mathTime').textContent = Math.max(0, mathGame.time);
+    $('#mathBar').style.width = Math.max(0, (mathGame.time / 90) * 100) + '%';
+    if (mathGame.time <= 0) endMath();
+  }, 1000);
+}
+
+function makeMathQ(){
+  // جمع بسيط جداً: 1-5 + 1-5
+  const a = ri(5) + 1;
+  const b = ri(5) + 1;
+  const ans = a + b;
+  const set = new Set([ans]);
+  let guard = 0;
+  while (set.size < 3 && guard++ < 50){
+    const delta = (ri(2) ? 1 : -1) * (ri(3) + 1);
+    const v = ans + delta;
+    if (v >= 1 && v !== ans) set.add(v);
+  }
+  while (set.size < 3) set.add(ans + set.size + 1);
+  return { text: `${a} + ${b} = ؟`, ans, opts: shuffle([...set]) };
+}
+
+function nextMathQ(){
+  const q = makeMathQ();
+  mathGame.current = q;
+  mathGame.locked = false;
+  $('#mathQ').textContent = q.text;
+  const box = $('#mathOpts');
+  box.innerHTML = '';
+  q.opts.forEach(v => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.style.textAlign = 'center';
+    b.style.justifyContent = 'center';
+    b.style.fontSize = '1.5rem';
+    b.style.fontWeight = '800';
+    b.textContent = v;
+    b.onclick = () => answerMath(b, v);
+    box.appendChild(b);
+  });
+}
+
+function answerMath(btn, val){
+  if (mathGame.locked) return;
+  mathGame.locked = true;
+  const q = mathGame.current;
+  const all = $$('#mathOpts .option');
+  all.forEach(b => b.disabled = true);
+  if (val === q.ans){
+    btn.classList.add('correct');
+    sGood();
+    mathGame.score++;
+    $('#mathScore').textContent = mathGame.score;
+  } else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (+b.textContent === q.ans) b.classList.add('correct'); });
+    sBad();
+  }
+  later(nextMathQ, val === q.ans ? 300 : 800);
+}
+
+function endMath(){
+  runCleanups();
+  const sc = mathGame.score;
+  const stars = sc >= 15 ? 3 : sc >= 10 ? 2 : 1;
+  addStars(stars);
+  showResult('انتهى الوقت! ⏰', `إجاباتك الصح: ${sc}.`, stars,
+    () => { showScreen('screen-math'); startMath(); });
+}
+
+/* =========================================================
+   16. مواقف — خيارين بس
+   ========================================================= */
+const SITUATIONS = [
+  {
+    q: 'زميلك نسي كتابه. تعمل إيه؟',
+    opts: [
+      { t: 'أشاركه كتابي', emoji: '🤝', ok: true },
+      { t: 'أضحك عليه',    emoji: '😠', ok: false }
+    ]
+  },
+  {
+    q: 'في المكتبة زميلك تايه. تعمل إيه؟',
+    opts: [
+      { t: 'أساعده يدور',         emoji: '🤝', ok: true },
+      { t: 'أسيبه وأمشي',         emoji: '🚶', ok: false }
+    ]
+  },
+  {
+    q: 'زميلك مش عارف يستخدم الكمبيوتر. تعمل إيه؟',
+    opts: [
+      { t: 'أعلمه',    emoji: '🤝', ok: true },
+      { t: 'أسخر منه', emoji: '😠', ok: false }
+    ]
+  },
+  {
+    q: 'في الفناء لقيت ورقة مرمية. تعمل إيه؟',
+    opts: [
+      { t: 'أرميها في السلة',   emoji: '🗑️', ok: true },
+      { t: 'أسيبها وأمشي',      emoji: '🚶', ok: false }
+    ]
+  },
+  {
+    q: 'زميلك في النشاط محتاج فكرة. تعمل إيه؟',
+    opts: [
+      { t: 'أشارك بأفكاري',   emoji: '💡', ok: true },
+      { t: 'أعمل لوحدي',      emoji: '🚶', ok: false }
+    ]
+  },
+  {
+    q: 'شفت زميل بيتنمّر عليه. تعمل إيه؟',
+    opts: [
+      { t: 'أقول للمعلم',          emoji: '👩‍🏫', ok: true },
+      { t: 'أضحك معاهم',           emoji: '😠', ok: false }
+    ]
+  },
+  {
+    q: 'في رحلة لميناء بورسعيد العامل بيشرح. تعمل إيه؟',
+    opts: [
+      { t: 'أسمع الشرح',       emoji: '👂', ok: true },
+      { t: 'أتكلم مع صاحبي',   emoji: '💬', ok: false }
+    ]
+  },
+  {
+    q: 'الصياد زار المدرسة بيحكي عن شغله. تعمل إيه؟',
+    opts: [
+      { t: 'أسمع وأسأل',       emoji: '👂', ok: true },
+      { t: 'أضحك عليه',        emoji: '😠', ok: false }
+    ]
+  }
+];
+
+let sitGame = {};
+
+function startTeamwork(){
+  runCleanups();
+  sitGame = { round: 0, score: 0, list: shuffle(SITUATIONS) };
+  $('#sitTotal').textContent = sitGame.list.length;
+  renderSitRound();
+}
+
+function renderSitRound(){
+  const g = sitGame;
+  if (g.round >= g.list.length){ endTeamwork(); return; }
+  const item = g.list[g.round];
+  g.done = false;
+  $('#sitRound').textContent = g.round + 1;
+  $('#sitQ').textContent = item.q;
+  const box = $('#sitOpts');
+  box.innerHTML = '';
+  shuffle(item.opts).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.dataset.ok = o.ok ? '1' : '0';
+    b.innerHTML = `<span class="opt-emoji">${o.emoji}</span><span>${o.t}</span>`;
+    b.onclick = () => answerSit(b, o);
+    box.appendChild(b);
+  });
+}
+
+function answerSit(btn, opt){
+  const g = sitGame;
+  if (g.done) return;
+  g.done = true;
+  const all = $$('#sitOpts .option');
+  all.forEach(b => b.disabled = true);
+  if (opt.ok){
+    btn.classList.add('correct');
+    sGood();
+    g.score++;
+  } else {
+    btn.classList.add('wrong');
+    all.forEach(b => { if (b.dataset.ok === '1') b.classList.add('correct'); });
+    sBad();
+  }
+  later(() => { g.round++; renderSitRound(); }, 1100);
+}
+
+function endTeamwork(){
+  runCleanups();
+  const sc = sitGame.score, tot = sitGame.list.length;
+  const stars = sc >= tot - 1 ? 3 : sc >= Math.ceil(tot * 0.6) ? 2 : 1;
+  addStars(stars);
+  showResult('إنت زميل رائع! 🤝', `اخترت الصح في ${sc} من ${tot}.`, stars,
+    () => { showScreen('screen-teamwork'); startTeamwork(); });
+}
+
+/* =========================================================
+   تشغيل الألعاب
+   ========================================================= */
+const GAMES = {
+  memory:   { screen: 'screen-memory',   start: startMemory },
+  words:    { screen: 'screen-words',    start: startWords },
+  places:   { screen: 'screen-places',   start: startPlaces },
+  tools:    { screen: 'screen-tools',    start: startSchoolTools },
+  jobs:     { screen: 'screen-jobs',     start: startJobs },
+  sea:      { screen: 'screen-sea',      start: startSea },
+  portsaid: { screen: 'screen-portsaid', start: startPortSaid },
+  classify: { screen: 'screen-classify', start: startClassify },
+  colors:   { screen: 'screen-colors',   start: startColors },
+  counting: { screen: 'screen-counting', start: startCounting },
+  animals:  { screen: 'screen-animals',  start: startAnimals },
+  food:     { screen: 'screen-food',     start: startFood },
+  vehicles: { screen: 'screen-vehicles', start: startVehicles },
+  truefalse:{ screen: 'screen-truefalse', start: startTF },
+  math:     { screen: 'screen-math',     start: startMath },
+  teamwork: { screen: 'screen-teamwork', start: startTeamwork }
+};
+
+$$('[data-game]').forEach(card => {
+  card.onclick = () => {
+    const g = GAMES[card.dataset.game];
+    if (!g) return;
+    runCleanups();
+    showScreen(g.screen);
+    sClick();
+    g.start();
+  };
+});
+</script>
+</body>
+</html>
